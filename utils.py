@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import scipy.stats
 import re
 import scipy.optimize as sciopt
+from scipy.integrate import odeint
 
 def est_linear_slope(counts,
                     # dt=1, # per hour
@@ -209,3 +210,28 @@ def est_dr_params(dc,gr,sigma=None):
     popt,pcov = sciopt.curve_fit(hill_fn,dc,gr,p0=p0,
                             maxfev=10000,sigma=sigma)
     return popt,pcov
+
+def cell_count_vs_time(t,N0,r_g,r_d,alpha):
+    """Cell count vs time
+
+    Args:
+        t (array-like): Time
+        N0 (float): Initial cell count (log)
+        r_g (float): Growth rate
+        r_d (float): Death rate
+        alpha (float): Antibiotic lag time
+    """
+
+    N = N0 + (1/2.303)*((r_g - r_d)*t + (r_d/alpha)*(np.exp(-alpha*t)))
+
+    return N
+
+def growth_diffeq(N,t,K,Kss,alpha,cc):
+
+    dydt = (K-Kss*(1-np.exp(-alpha*t)))*N*(1-N/cc)
+
+    return dydt
+
+def growth_sol(t,y0,K,Kss,alpha,cc):
+    y = odeint(growth_diffeq,y0,t,args=(K,Kss,alpha,cc))
+    return y[:,0]
