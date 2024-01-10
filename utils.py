@@ -73,13 +73,13 @@ def est_linear_slope(counts,
     else:
         use_indices = np.argwhere(slopes>=lb)[:,0]
 
-    if len(use_indices) == 1:
-        if est_negative_slope:
-            print('Warning: only one slope found')
-            return np.nanmin(slopes)
-        else:
-            print('Warning: only one slope found')
-            return np.nanmax(slopes)
+    # if len(use_indices) == 1:
+    #     if est_negative_slope:
+    #         print('Warning: only one slope found')
+    #         return np.nanmin(slopes)
+    #     else:
+    #         print('Warning: only one slope found')
+    #         return np.nanmax(slopes)
 
     if len(use_indices) > 1:
         lin_range = x_pos[np.min(use_indices):np.max(use_indices)+window]
