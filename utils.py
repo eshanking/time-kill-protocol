@@ -4,6 +4,8 @@ import scipy.stats
 import re
 import scipy.optimize as sciopt
 from scipy.integrate import odeint
+from fears.utils import AutoRate
+import os
 
 def est_linear_slope(counts,
                     # dt=1, # per hour
@@ -235,3 +237,37 @@ def growth_diffeq(N,t,K,Kss,alpha,cc):
 def growth_sol(t,y0,K,Kss,alpha,cc):
     y = odeint(growth_diffeq,y0,t,args=(K,Kss,alpha,cc))
     return y[:,0]
+
+def get_timeseries(folder_path,plate_num=None):
+    """Takes a folder of excel files and returns a list of plates and a list of data
+    Each element in the list corresponds to a plate scan.
+    Specify plate num to get the data from a specific excel sheet.
+
+    Args:
+        folder_path (str): path to the folder containing the excel files
+        plate_num (int): the excel sheet number corresponding to the plate
+
+    Returns:
+        list: list of plate objects
+        list: list of dictionaries containing the data
+    """
+    plate_files = os.listdir(folder_path)
+
+    # filter and sort the files
+    plate_files = [p for p in plate_files if p.endswith('.xlsx')]
+    plate_files.sort(key=natural_keys)
+
+    plates = []
+    data = []
+    for plate_file in plate_files:
+        if plate_file[0] != '~': # ignore temporary files
+            path_t = os.getcwd() + os.sep + folder_path + os.sep + plate_file # path to the excel file
+
+            # get a plate object corresponding to the excel file
+            p = AutoRate.Plate(path_t,mode='single_measurement',sheet_name=plate_num)
+            plates.append(p)
+
+            # put the data in dictionary format with keys corresponding to the well names 
+            data.append(p.od_data_to_dict(p.data))
+            
+    return plates,data
