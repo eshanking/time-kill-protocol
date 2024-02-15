@@ -295,7 +295,8 @@ def linear_range_obj_fn(X,Y,l,k,slope_ub=np.inf,slope_lb=-np.inf):
     else:
         n = len(X)
 
-        return (k*(res.stderr+1)**2 + l/(n**0.5))
+        return (1-res.rvalue**2) + l/(n**2)
+        # return (1-res.rvalue) + l/n
 
 def opt_linear_range(X,Y,l,k,slope_ub=np.inf,slope_lb=-np.inf):
     """Finds the optimal linear range for a given dataset
@@ -334,4 +335,5 @@ def opt_linear_range(X,Y,l,k,slope_ub=np.inf,slope_lb=-np.inf):
     
     # find the subset with the minimum loss
     min_loss_indx = np.argmin(loss_list)
+
     return subset_list[min_loss_indx]
