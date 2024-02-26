@@ -272,7 +272,7 @@ def get_timeseries(folder_path,plate_num=None):
             
     return plates,data
 
-def linear_range_obj_fn(X,Y,l,k,slope_ub=np.inf,slope_lb=-np.inf):
+def linear_range_obj_fn(X,Y,l,slope_ub=np.inf,slope_lb=-np.inf):
     """Objective function for finding the optimal linear range
 
     Args:
@@ -298,7 +298,7 @@ def linear_range_obj_fn(X,Y,l,k,slope_ub=np.inf,slope_lb=-np.inf):
         return (1-res.rvalue**2) + l/(n**2)
         # return (1-res.rvalue) + l/n
 
-def opt_linear_range(X,Y,l,k,slope_ub=np.inf,slope_lb=-np.inf):
+def opt_linear_range(X,Y,l,slope_ub=np.inf,slope_lb=-np.inf):
     """Finds the optimal linear range for a given dataset
 
     Args:
@@ -329,7 +329,7 @@ def opt_linear_range(X,Y,l,k,slope_ub=np.inf,slope_lb=-np.inf):
 
             # print(end)
 
-            loss = linear_range_obj_fn(X_subset,Y_subset,l,k,slope_ub=slope_ub,slope_lb=slope_lb)
+            loss = linear_range_obj_fn(X_subset,Y_subset,l,slope_ub=slope_ub,slope_lb=slope_lb)
             loss_list.append(loss)
             subset_list.append((start,end))
     
