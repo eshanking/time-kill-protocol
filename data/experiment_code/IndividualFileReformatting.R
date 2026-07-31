@@ -1,0 +1,174 @@
+library(openxlsx2)
+
+################## Code for reformatting files following JC_FLUO_96w_YYYYMMDD_HHMMSS_DRUG_{H/M/L}_COL
+
+setwd("C:/Users/s3ayy/Documents/GitHub/time-kill-protocol/data/experiment_data/JC_FLUO_96w_20260630_TimeKill/")
+file_list <- list.files(pattern = ".xlsx", recursive = TRUE, full.names = TRUE)
+
+# Renaming files to be consistent between folder and .xlsx file
+
+for (file_name in file_list) {
+  slash_split <- strsplit(file_name, split = "/")[[1]]
+  underscore_split_file <- sub(".xlsx", "", strsplit(basename(file_name), split = "_")[[1]])
+  underscore_split_folder <- strsplit(slash_split[2], split = "_")[[1]]
+  
+  
+  if (length(underscore_split_folder) > length(underscore_split_file)) {
+    underscore_split_file[6] <- underscore_split_folder[6]
+    underscore_split_file[7] <- underscore_split_folder[7]
+    underscore_split_file[8] <- underscore_split_folder[8]
+  }
+  
+  if (any(underscore_split_file[6:8] != underscore_split_folder[6:8])) {
+    print(paste("Naming mismatch between folder and file for", file_name))
+    next
+  }
+  
+  slash_split[5] <- paste0(paste(underscore_split_file, collapse = "_"), ".xlsx")
+  
+  new_name <- paste(slash_split, collapse = "/")
+  
+  file.rename(file_name, new_name)
+  
+  if (new_name == file_name) {
+    print("No change")
+  } else {
+    print(paste("file name changed from", file_name, "to", new_name))
+  }
+}
+
+drugs <- c("CEF", "CIP")
+
+strain <- "Ecoli"
+
+date <- "06302026"
+
+column_signatures <- 2:11
+
+for (drug in drugs) {
+  
+  dir_name <- paste(c("tk", strain, drug, date), collapse = "_")
+  
+  dir.create(dir_name)
+  column_signature <- column_signatures[1]
+  for (column_signature in column_signatures) {
+    
+    output_wb <- wb_workbook()
+    
+    file_patterns <- paste(drug, c("L", "M", "H"), column_signature, sep = "_")
+    
+    for (file_pattern in file_patterns) {
+      file_name <- list.files(pattern = file_pattern, recursive = TRUE, full.names = TRUE)
+      
+      if (length(file_name) > 1) {
+        print("More than one file matched, fatal error")
+        stop()
+      }
+      
+      new_sheet <- wb_load(file_name)
+      new_sheet <- wb_set_sheet_names(new_sheet, old = 1, new = file_pattern)
+      
+      output_wb <- wb_clone_worksheet(output_wb, old = file_pattern, new = file_pattern, from = new_sheet)
+    }
+    
+    low_file_name <- basename(list.files(pattern = file_patterns[1], recursive = TRUE, full.names = TRUE))
+    
+    underscore_split_low <- strsplit(low_file_name, split = "_")[[1]]
+    
+    output_file_name <- paste0(dir_name, "/", paste(underscore_split_low[1:5], collapse = "_"), ".xlsx")
+    
+    wb_save(output_wb, file = output_file_name)
+    
+  }
+}
+
+
+################## Code for reformatting files following JC_FLUO_96w_YYYYMMDD_HHMMSS_DRUG_STRAIN_{H/M/L}_COL
+
+setwd("C:/Users/s3ayy/Documents/GitHub/time-kill-protocol/data/experiment_data/JC_FLUO_96w_20260727_TKA/")
+file_list <- list.files(pattern = ".xlsx", recursive = TRUE, full.names = TRUE)
+
+# Renaming files to be consistent between folder and .xlsx file
+
+for (file_name in file_list) {
+  slash_split <- strsplit(file_name, split = "/")[[1]]
+  underscore_split_file <- sub(".xlsx", "", strsplit(basename(file_name), split = "_")[[1]])
+  underscore_split_folder <- strsplit(slash_split[2], split = "_")[[1]]
+  
+  
+  if (length(underscore_split_folder) > length(underscore_split_file)) {
+    underscore_split_file[6] <- underscore_split_folder[6]
+    underscore_split_file[7] <- underscore_split_folder[7]
+    underscore_split_file[8] <- underscore_split_folder[8]
+    underscore_split_file[9] <- underscore_split_folder[9]
+  }
+  
+  if (any(underscore_split_file[6:9] != underscore_split_folder[6:9])) {
+    print(paste("Naming mismatch between folder and file for", file_name))
+    next
+  }
+  
+  slash_split[5] <- paste0(paste(underscore_split_file, collapse = "_"), ".xlsx")
+  
+  new_name <- paste(slash_split, collapse = "/")
+  
+  file.rename(file_name, new_name)
+  
+  if (new_name == file_name) {
+    print("No change")
+  } else {
+    print(paste("file name changed from", file_name, "to", new_name))
+  }
+}
+
+drugs <- c("CIP")
+
+strains <- c("Ecoli")
+
+date <- "07272026"
+
+column_signatures <- 2:11
+for (strain in strains) {
+  
+  strain_code <- substr(strain, 1, 1)
+  
+  for (drug in drugs) {
+    
+    dir_name <- paste(c("tk", strain, drug, date), collapse = "_")
+    
+    dir.create(dir_name)
+    
+    for (column_signature in column_signatures) {
+      
+      output_wb <- wb_workbook()
+      
+      file_patterns <- paste(drug, strain_code, c("L", "M", "H"), column_signature, sep = "_")
+      
+      for (file_pattern in file_patterns) {
+        file_name <- list.files(pattern = file_pattern, recursive = TRUE, full.names = TRUE)
+        
+        if (length(file_name) > 1) {
+          print("More than one file matched, fatal error")
+          stop()
+        }
+        
+        new_sheet <- wb_load(file_name)
+        new_sheet <- wb_set_sheet_names(new_sheet, old = 1, new = file_pattern)
+        
+        output_wb <- wb_clone_worksheet(output_wb, old = file_pattern, new = file_pattern, from = new_sheet)
+      }
+      
+      low_file_name <- basename(list.files(pattern = file_patterns[1], recursive = TRUE, full.names = TRUE))
+      
+      underscore_split_low <- strsplit(low_file_name, split = "_")[[1]]
+      
+      output_file_name <- paste0(dir_name, "/", paste(underscore_split_low[1:5], collapse = "_"), ".xlsx")
+      
+      wb_save(output_wb, file = output_file_name)
+      
+    }
+  }
+}
+
+
+
