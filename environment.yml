@@ -1,0 +1,14 @@
+name: tk_env
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.14
+  - numpy
+  - pandas
+  - matplotlib
+  - scipy
+  - seaborn
+  - sklearn
+  - openpyxl
+prefix: /Users/eshanking/software/miniforge3/envs/tk_env
